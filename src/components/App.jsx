@@ -1,5 +1,8 @@
 import { Component } from 'react';
 import FeedbackOptions from './Buttons/Buttons';
+import Statistics from './Statistics/Statistics';
+import SectionTitle from './SectionTitle/SectionTitle';
+import NotificationMesssage from './Notifications/Notification';
 
 export class App extends Component {
   state = {
@@ -8,7 +11,7 @@ export class App extends Component {
     bad: 0,
   };
 
-  giveRate = option => {
+  onLeaveFeedback = option => {
     this.setState(prevState => {
       return {
         [option]: prevState[option] + 1,
@@ -27,27 +30,33 @@ export class App extends Component {
   };
 
   render() {
+    const totalFeedback = this.countTotalFeedback();
     return (
       <>
-        <h2>Please leave feedback</h2>
+        <SectionTitle>
+          <h2>Please leave feedback</h2>
+          <FeedbackOptions
+            options={Object.keys(this.state)}
+            onLeaveFeedback={this.onLeaveFeedback}
+          />
+        </SectionTitle>
 
-        <FeedbackOptions
-          options={Object.keys(this.state)}
-          giveRate={this.giveRate}
-        />
-        {/* <button onClick={() => this.giveRate('good')}>Good</button>
-        <button onClick={() => this.giveRate('neutral')}>Neutral</button>
-        <button onClick={() => this.giveRate('bad')}>Bad</button> */}
-        <h2>Statistics</h2>
-        <ul>
-          <li>Good: {this.state.good}</li>
-          <li>Neutral: {this.state.neutral}</li>
-          <li>Bad: {this.state.bad}</li>
-          <li>Total: {this.countTotalFeedback()}</li>
-          <li>Positive feedback: {this.countPositiveFeedbackPercentage()}%</li>
-        </ul>
+        <SectionTitle>
+          <h2>Statistics</h2>
+
+          {totalFeedback !== 0 ? (
+            <Statistics
+              value={this.state}
+              countTotalFeedback={this.countTotalFeedback}
+              countPositiveFeedbackPercentage={
+                this.countPositiveFeedbackPercentage
+              }
+            />
+          ) : (
+            <NotificationMesssage />
+          )}
+        </SectionTitle>
       </>
     );
   }
 }
-export default App;
